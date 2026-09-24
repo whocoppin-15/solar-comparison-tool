@@ -4,12 +4,15 @@ import pandas as pd
 from entsoe import EntsoePandasClient
 from datetime import date, timedelta
 
+# Récupération des clés et variables d'environnement
 api_key = os.getenv("ENTSOE_API_KEY")
+custom_start = os.getenv("INPUT_START_DATE")
+custom_end = os.getenv("INPUT_END_DATE")
 
 if not api_key:
     print("❌ ERREUR : La clé API ENTSOE_API_KEY est manquante !")
 else:
-    print("🔑 Clé API détectée avec succès.")
+    print("🔑 Clé API détectée.")
 
 client = EntsoePandasClient(api_key=api_key)
 
@@ -55,8 +58,18 @@ def process_zone(country, start_dt, end_dt, granularity='1h'):
         print(f"⚠️ Erreur lors de la récupération pour {country} : {e}")
         return None
 
-start = date.today() - timedelta(days=7)
-end = date.today() - timedelta(days=1)
+# Gestion dynamique des dates
+if custom_start and custom_end:
+    start_str = custom_start
+    end_str = custom_end
+    print(f"📅 Dates personnalisées saisies : du {start_str} au {end_str}")
+else:
+    # Par défaut : 7 derniers jours
+    start_dt = date.today() - timedelta(days=7)
+    end_dt = date.today() - timedelta(days=1)
+    start_str = str(start_dt)
+    end_str = str(end_dt)
+    print(f"📅 Dates par défaut utilisées : du {start_str} au {end_str}")
 
 zones_list = [
     "FR", "DE_LU", "ES", "BE", "PT", "IT_NORTH", "NL", "CH", "AT", "PL",
@@ -65,12 +78,12 @@ zones_list = [
 
 output_zones = {}
 for z in zones_list:
-    res = process_zone(z, start, end, granularity='1h')
+    res = process_zone(z, start_str, end_str, granularity='1h')
     if res is not None:
         output_zones[z] = res
 
 output_data = {
-    "period": {"start": str(start), "end": str(end)},
+    "period": {"start": start_str, "end": end_str},
     "zones": output_zones
 }
 
