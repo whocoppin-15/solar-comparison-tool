@@ -7,7 +7,7 @@ async function init() {
     const response = await fetch('data.json');
     globalData = await response.json();
 
-    // Configuration des dates par défaut selon data.json
+    // Remplissage automatique des dates enregistrées dans data.json
     if (globalData.period) {
       document.getElementById('start-date').value = globalData.period.start;
       document.getElementById('end-date').value = globalData.period.end;
@@ -23,7 +23,7 @@ async function init() {
     // Premier rendu
     updateView();
   } catch (error) {
-    console.error("Erreur lors de l'initialisation :", error);
+    console.error("Erreur de chargement du fichier data.json :", error);
   }
 }
 
@@ -35,6 +35,106 @@ function toggleCompare() {
 
 function updateView() {
   if (!globalData || !globalData.zones) return;
+
+  const c1Key = document.getElementById('country1').value;
+  const isCompareEnabled = document.getElementById('enable-compare').checked;
+  const c2Key = document.getElementById('country2').value;
+
+  const zone1 = globalData.zones[c1Key];
+  const zone2 = isCompareEnabled ? globalData.zones[c2Key] : null;
+
+  // 1. Mise à jour des cartes de métriques
+  const metricsDiv = document.getElementById('metrics-container');
+  let metricsHTML = '';
+
+  if (zone1) {
+    metricsHTML += `
+      <div class="metric-card">
+        <div class="metric-title">📍 ${c1Key}</div>
+        <div class="metric-val">Baseload : <b>${zone1.baseload} €/MWh</b></div>
+        <div class="metric-val">Prix Solaire : <b>${zone1.solar_price} €/MWh</b></div>
+        <div class="metric-val">Cannibalisation : <b>${zone1.facteur_cannibalisation}</b> (${zone1.decote_pct}% décote)</div>
+      </div>
+    `;
+  } else {
+    metricsHTML += `<div class="metric-card"><div class="metric-title">📍 ${c1Key}</div><div>Pas encore de données extraites.</div></div>`;
+  }
+
+  if (isCompareEnabled) {
+    if (zone2) {
+      metricsHTML += `
+        <div class="metric-card secondary">
+          <div class="metric-title">📍 ${c2Key}</div>
+          <div class="metric-val">Baseload : <b>${zone2.baseload} €/MWh</b></div>
+          <div class="metric-val">Prix Solaire : <b>${zone2.solar_price} €/MWh</b></div>
+          <div class="metric-val">Cannibalisation : <b>${zone2.facteur_cannibalisation}</b> (${zone2.decote_pct}% décote)</div>
+        </div>
+      `;
+    } else {
+      metricsHTML += `<div class="metric-card secondary"><div class="metric-title">📍 ${c2Key}</div><div>Pas encore de données extraites.</div></div>`;
+    }
+  }
+
+  metricsDiv.innerHTML = metricsHTML;
+
+  // 2. Préparation des jeux de données Chart.js
+  const datasets = [];
+
+  if (zone1) {
+    datasets.push({
+      label: `${c1Key} (${zone1.baseload} €/MWh)`,
+      data: zone1.prices,
+      borderColor: '#0d6efd',
+      backgroundColor: 'rgba(13, 110, 253, 0.08)',
+      fill: true,
+      borderWidth: 2,
+      tension: 0.2
+    });
+  }
+
+  if (zone2) {
+    datasets.push({
+      label: `${c2Key} (${zone2.baseload} €/MWh)`,
+      data: zone2.prices,
+      borderColor: '#fd7e14',
+      backgroundColor: 'rgba(253, 126, 20, 0.08)',
+      fill: true,
+      borderWidth: 2,
+      tension: 0.2
+    });
+  }
+
+  // 3. Rendu du Graphique
+  const ctx = document.getElementById('comparisonChart').getContext('2d');
+
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+
+  const labels = zone1 ? zone1.labels : (zone2 ? zone2.labels : []);
+
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Heure de la journée' } },
+        y: { title: { display: true, text: 'Prix Spot (€/MWh)' } }
+      }
+    }
+  });
+}
+
+init();  if (!globalData || !globalData.zones) return;
 
   const c1Key = document.getElementById('country1').value;
   const isCompareEnabled = document.getElementById('enable-compare').checked;
