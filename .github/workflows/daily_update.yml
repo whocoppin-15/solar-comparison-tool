@@ -1,11 +1,21 @@
-name: Mise à jour quotidienne des données ENTSO-E
+name: Mise à jour des données ENTSO-E
 
 on:
   schedule:
-    # Exécution automatique tous les jours à 06:00 UTC (07:00 / 08:00 heure française)
+    # Exécution automatique tous les jours à 06:00 UTC (prend les 7 derniers jours par défaut)
     - cron: '0 6 * * *'
-  # Permet aussi de déclencher le workflow manuellement depuis l'onglet Actions
+  
+  # Déclenchement manuel avec saisie de dates
   workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Date de début (YYYY-MM-DD)'
+        required: false
+        default: ''
+      end_date:
+        description: 'Date de fin (YYYY-MM-DD)'
+        required: false
+        default: ''
 
 jobs:
   update-data:
@@ -25,9 +35,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas entsoe-py
 
-      - name: Exécuter le script Python
+      - name: Exécuter le script Python avec les dates configurées
         env:
           ENTSOE_API_KEY: ${{ secrets.ENTSOE_API_KEY }}
+          INPUT_START_DATE: ${{ github.event.inputs.start_date }}
+          INPUT_END_DATE: ${{ github.event.inputs.end_date }}
         run: |
           python generate_data.py
 
@@ -36,5 +48,4 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add data.json
-          git status
-          git diff-index --quiet HEAD || (git commit -m "🤖 Auto-update data.json [skip ci]" && git push)
+          git diff-index --quiet HEAD || (git commit -m "🤖 Update data.json for custom dates [skip ci]" && git push)
