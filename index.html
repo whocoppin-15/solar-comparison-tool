@@ -10,6 +10,21 @@
     body { font-family: system-ui, -apple-system, sans-serif; margin: 2rem; background-color: #f8f9fa; color: #212529; }
     .container { max-width: 1100px; margin: 0 auto; }
     .card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+    .btn-update {
+  display: inline-block;
+  background-color: #0d6efd;
+  color: white;
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+.btn-update:hover {
+  background-color: #0b5ed7;
+}
     
     /* Style des Contrôles / Widgets */
     .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end; }
@@ -79,4 +94,12 @@
 
   <script src="script.js"></script>
 </body>
+<div class="form-group" style="align-self: end;">
+  <a href="https://github.com/whocoppin-15/solar-comparison-tool/actions/workflows/daily_update.yml" 
+     target="_blank" 
+     class="btn-update">
+    🔄 Lancer l'extraction ENTSO-E
+  </a>
+</div>
+  
 </html>
