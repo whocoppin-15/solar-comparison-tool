@@ -4,21 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Comparateur Spot & Cannibalisation Interactif</title>
-  <!-- Chart.js CDN -->
+  <!-- Inclusion de Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; margin: 2rem; background-color: #f8f9fa; color: #212529; }
-    .container { max-width: 1150px; margin: 0 auto; }
-    .card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
-    
-    /* Widgets & Formulaires */
-    .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; align-items: end; }
-    .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
-    .form-group label { font-size: 0.85rem; font-weight: 600; color: #495057; }
-    .form-control { padding: 0.55rem 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; }
-    .checkbox-group { display: flex; align-items: center; gap: 0.5rem; }
-    
-    /* Bouton d'extraction GitHub Actions */
+    body { 
+      font-family: system-ui, -apple-system, sans-serif; 
+      margin: 2rem; 
+      background-color: #f8f9fa; 
+      color: #212529; 
+    }
+    .container { 
+      max-width: 1150px; 
+      margin: 0 auto; 
+    }
+    .card { 
+      background: white; 
+      padding: 1.5rem; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+      margin-bottom: 1.5rem; 
+    }
+    .controls { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      gap: 1rem; 
+      align-items: end; 
+    }
+    .form-group { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 0.3rem; 
+    }
+    .form-group label { 
+      font-size: 0.85rem; 
+      font-weight: 600; 
+      color: #495057; 
+    }
+    .form-control { 
+      padding: 0.55rem 0.75rem; 
+      border: 1px solid #ced4da; 
+      border-radius: 6px; 
+      font-size: 0.95rem; 
+    }
+    .checkbox-group { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.5rem; 
+    }
     .btn-action {
       display: inline-block;
       background-color: #0d6efd;
@@ -31,14 +63,15 @@
       text-align: center;
       transition: background-color 0.2s;
     }
-    .btn-action:hover { background-color: #0b5ed7; }
-    
-    /* Cartes Métriques */
-    .metrics-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
-    .metric-card { padding: 1rem; border-radius: 8px; border-left: 4px solid #0d6efd; background-color: #f8f9fa; }
-    .metric-card.secondary { border-left-color: #fd7e14; }
-    .metric-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; }
-    .metric-val { font-size: 0.9rem; color: #495057; margin-bottom: 0.25rem; }
+    .btn-action:hover { 
+      background-color: #0b5ed7; 
+    }
+    .metrics-container { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+      gap: 1rem; 
+      margin-top: 1rem; 
+    }
   </style>
 </head>
 <body>
@@ -55,13 +88,62 @@
             <option value="DE_LU">Allemagne / Lux. (DE_LU)</option>
             <option value="ES">Espagne (ES)</option>
             <option value="BE">Belgique (BE)</option>
-            <option value="PT">Portugal (PT)</option>
-            <option value="IT_NORTH">Italie Nord (IT_NORTH)</option>
             <option value="NL">Pays-Bas (NL)</option>
             <option value="CH">Suisse (CH)</option>
             <option value="AT">Autriche (AT)</option>
-            <option value="PL">Pologne (PL)</option>
-            <option value="CZ">Tchéquie (CZ)</option>
+            <option value="IT_NORTH">Italie Nord (IT_NORTH)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="enable-compare">
+            <label for="enable-compare">Comparer avec un autre pays</label>
+          </div>
+          <select id="country2" class="form-control" disabled>
+            <option value="DE_LU" selected>Allemagne / Lux. (DE_LU)</option>
+            <option value="FR">France (FR)</option>
+            <option value="ES">Espagne (ES)</option>
+            <option value="BE">Belgique (BE)</option>
+            <option value="NL">Pays-Bas (NL)</option>
+            <option value="CH">Suisse (CH)</option>
+            <option value="AT">Autriche (AT)</option>
+            <option value="IT_NORTH">Italie Nord (IT_NORTH)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="start-date">Date de début :</label>
+          <input type="date" id="start-date" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="end-date">Date de fin :</label>
+          <input type="date" id="end-date" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <a href="https://github.com/whocoppin-15/solar-comparison-tool/actions/workflows/daily_update.yml" 
+             target="_blank" 
+             class="btn-action">
+            🔄 Lancer l'extraction ENTSO-E
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Affichage des Métriques et Graphique -->
+    <div class="card">
+      <div class="metrics-container" id="metrics-container"></div>
+      <div style="position: relative; height: 450px; margin-top: 1.5rem;">
+        <canvas id="comparisonChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>            <option value="CZ">Tchéquie (CZ)</option>
             <option value="SK">Slovaquie (SK)</option>
             <option value="HU">Hongrie (HU)</option>
             <option value="RO">Roumanie (RO)</option>
