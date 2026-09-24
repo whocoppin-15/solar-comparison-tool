@@ -71,7 +71,7 @@ output_data = {
         "DK_1": process_zone("DK_1", start, end, granularity='1h'),
         "DK_2": process_zone("DK_2", start, end, granularity='1h'),
         "SE_3": process_zone("SE_3", start, end, granularity='1h'),
-        "FI": process_zone("FI", start, end, granularity='1h'),
+        "FI": process_zone("FI", start, end, granularity='1h')
     }
 }
 
