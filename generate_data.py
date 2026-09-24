@@ -53,7 +53,25 @@ output_data = {
     "period": {"start": str(start), "end": str(end)},
     "zones": {
         "FR": process_zone("FR", start, end, granularity='1h'),
-        "DE_LU": process_zone("DE_LU", start, end, granularity='1h')
+        "DE_LU": process_zone("DE_LU", start, end, granularity='1h'),
+        "ES": process_zone("ES", start, end, granularity='1h'),
+        "BE": process_zone("BE", start, end, granularity='1h'),
+        "PT": process_zone("PT", start, end, granularity='1h'),
+        "IT_NORTH": process_zone("IT_NORTH", start, end, granularity='1h'),
+        "NL": process_zone("NL", start, end, granularity='1h'),
+        "CH": process_zone("CH", start, end, granularity='1h'),
+        "AT": process_zone("AT", start, end, granularity='1h'),
+        "PL": process_zone("PL", start, end, granularity='1h'),
+        "CZ": process_zone("CZ", start, end, granularity='1h'),
+        "SK": process_zone("SK", start, end, granularity='1h'),
+        "HU": process_zone("HU", start, end, granularity='1h'),
+        "RO": process_zone("RO", start, end, granularity='1h'),
+        "BG": process_zone("BG", start, end, granularity='1h'),
+        "GR": process_zone("GR", start, end, granularity='1h'),
+        "DK_1": process_zone("DK_1", start, end, granularity='1h'),
+        "DK_2": process_zone("DK_2", start, end, granularity='1h'),
+        "SE_3": process_zone("SE_3", start, end, granularity='1h'),
+        "FI": process_zone("FI", start, end, granularity='1h'),
     }
 }
 
