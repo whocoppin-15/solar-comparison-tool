@@ -4,7 +4,6 @@ import pandas as pd
 from entsoe import EntsoePandasClient
 from datetime import date, timedelta
 
-# Récupération de la clé API
 api_key = os.getenv("ENTSOE_API_KEY")
 
 if not api_key:
@@ -20,7 +19,7 @@ def process_zone(country, start_dt, end_dt, granularity='1h'):
     end_ts = pd.Timestamp(end_dt, tz=tz) + pd.Timedelta(days=1)
     
     try:
-        prices = client.query_day_ahead_prices(country, start=start_ts, end=end_ts)
+        prices = client.query_day_ahead_prices(country_code=country, start=start_ts, end=end_ts)
         df = prices.to_frame(name="price_eur_mwh").reset_index()
         df.columns = ["timestamp", "price_eur_mwh"]
         df["hour"] = df["timestamp"].dt.hour
@@ -29,19 +28,20 @@ def process_zone(country, start_dt, end_dt, granularity='1h'):
             df_resample = df.set_index("timestamp").resample("15min").ffill().reset_index()
             df_resample["hour"] = df_resample["timestamp"].dt.hour
             df_resample["slot"] = df_resample["timestamp"].dt.strftime("%H:%M")
-            solar_mask = (df_resample["hour"] >= 10) & (df_resample["hour"] <= 17)
         else:
             df_resample = df.set_index("timestamp").resample("1h").mean().reset_index()
             df_resample["hour"] = df_resample["timestamp"].dt.hour
             df_resample["slot"] = df_resample["hour"].apply(lambda h: f"{h:02d}:00")
-            solar_mask = (df_resample["hour"] >= 10) & (df_resample["hour"] <= 17)
 
+        solar_mask = (df_resample["hour"] >= 10) & (df_resample["hour"] <= 17)
         profile = df_resample.groupby("slot")["price_eur_mwh"].mean()
         
         baseload = float(df_resample["price_eur_mwh"].mean())
         solar_price = float(df_resample[solar_mask]["price_eur_mwh"].mean())
         fc = solar_price / baseload if baseload != 0 else 0
         decote = (1 - fc) * 100
+
+        print(f"✅ Zone {country} traitée avec succès.")
 
         return {
             "labels": profile.index.tolist(),
@@ -55,7 +55,6 @@ def process_zone(country, start_dt, end_dt, granularity='1h'):
         print(f"⚠️ Erreur lors de la récupération pour {country} : {e}")
         return None
 
-# Calcul sur les 7 derniers jours
 start = date.today() - timedelta(days=7)
 end = date.today() - timedelta(days=1)
 
@@ -75,8 +74,7 @@ output_data = {
     "zones": output_zones
 }
 
-# Sauvegarde dans data.json
 with open("data.json", "w", encoding="utf-8") as f:
     json.dump(output_data, f, indent=2, ensure_ascii=False)
 
-print("✅ Fichier 'data.json' généré avec succès pour l'ensemble des zones disponibles !")
+print("✅ Fichier 'data.json' mis à jour avec succès !")
