@@ -4,8 +4,14 @@ import pandas as pd
 from entsoe import EntsoePandasClient
 from datetime import date, timedelta
 
-# Récupération de la clé API depuis les secrets GitHub
+# Récupération de la clé API
 api_key = os.getenv("ENTSOE_API_KEY")
+
+if not api_key:
+    print("❌ ERREUR : La clé API ENTSOE_API_KEY est manquante !")
+else:
+    print("🔑 Clé API détectée avec succès.")
+
 client = EntsoePandasClient(api_key=api_key)
 
 def process_zone(country, start_dt, end_dt, granularity='1h'):
