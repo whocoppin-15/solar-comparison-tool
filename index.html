@@ -8,33 +8,133 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; margin: 2rem; background-color: #f8f9fa; color: #212529; }
-    .container { max-width: 1100px; margin: 0 auto; }
+    .container { max-width: 1150px; margin: 0 auto; }
     .card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
-    .btn-update {
-  display: inline-block;
-  background-color: #0d6efd;
-  color: white;
-  padding: 0.55rem 1rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-align: center;
-  transition: background-color 0.2s;
-}
-.btn-update:hover {
-  background-color: #0b5ed7;
-}
     
-    /* Style des Contrôles / Widgets */
-    .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end; }
+    /* Widgets & Formulaires */
+    .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; align-items: end; }
     .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
     .form-group label { font-size: 0.85rem; font-weight: 600; color: #495057; }
-    .form-control { padding: 0.5rem 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; }
-    .checkbox-group { display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; }
+    .form-control { padding: 0.55rem 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; }
+    .checkbox-group { display: flex; align-items: center; gap: 0.5rem; }
     
-    /* Style des Métriques */
+    /* Bouton d'extraction GitHub Actions */
+    .btn-action {
+      display: inline-block;
+      background-color: #0d6efd;
+      color: white;
+      padding: 0.55rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+    .btn-action:hover { background-color: #0b5ed7; }
+    
+    /* Cartes Métriques */
     .metrics-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .metric-card { padding: 1rem; border-radius: 8px; border-left: 4px solid #0d6efd; background-color: #f8f9fa; }
+    .metric-card.secondary { border-left-color: #fd7e14; }
+    .metric-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; }
+    .metric-val { font-size: 0.9rem; color: #495057; margin-bottom: 0.25rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>⚡ Comparateur Spot & Cannibalisation Solaire</h2>
+
+    <!-- Panneau de Contrôle / Widgets -->
+    <div class="card">
+      <div class="controls">
+        <div class="form-group">
+          <label for="country1">Pays principal :</label>
+          <select id="country1" class="form-control">
+            <option value="FR" selected>France (FR)</option>
+            <option value="DE_LU">Allemagne / Lux. (DE_LU)</option>
+            <option value="ES">Espagne (ES)</option>
+            <option value="BE">Belgique (BE)</option>
+            <option value="PT">Portugal (PT)</option>
+            <option value="IT_NORTH">Italie Nord (IT_NORTH)</option>
+            <option value="NL">Pays-Bas (NL)</option>
+            <option value="CH">Suisse (CH)</option>
+            <option value="AT">Autriche (AT)</option>
+            <option value="PL">Pologne (PL)</option>
+            <option value="CZ">Tchéquie (CZ)</option>
+            <option value="SK">Slovaquie (SK)</option>
+            <option value="HU">Hongrie (HU)</option>
+            <option value="RO">Roumanie (RO)</option>
+            <option value="BG">Bulgarie (BG)</option>
+            <option value="GR">Grèce (GR)</option>
+            <option value="DK_1">Danemark Ouest (DK_1)</option>
+            <option value="DK_2">Danemark Est (DK_2)</option>
+            <option value="SE_3">Suède 3 (SE_3)</option>
+            <option value="FI">Finlande (FI)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="enable-compare" checked>
+            <label for="enable-compare">Comparer avec un autre pays</label>
+          </div>
+          <select id="country2" class="form-control">
+            <option value="DE_LU" selected>Allemagne / Lux. (DE_LU)</option>
+            <option value="FR">France (FR)</option>
+            <option value="ES">Espagne (ES)</option>
+            <option value="BE">Belgique (BE)</option>
+            <option value="PT">Portugal (PT)</option>
+            <option value="IT_NORTH">Italie Nord (IT_NORTH)</option>
+            <option value="NL">Pays-Bas (NL)</option>
+            <option value="CH">Suisse (CH)</option>
+            <option value="AT">Autriche (AT)</option>
+            <option value="PL">Pologne (PL)</option>
+            <option value="CZ">Tchéquie (CZ)</option>
+            <option value="SK">Slovaquie (SK)</option>
+            <option value="HU">Hongrie (HU)</option>
+            <option value="RO">Roumanie (RO)</option>
+            <option value="BG">Bulgarie (BG)</option>
+            <option value="GR">Grèce (GR)</option>
+            <option value="DK_1">Danemark Ouest (DK_1)</option>
+            <option value="DK_2">Danemark Est (DK_2)</option>
+            <option value="SE_3">Suède 3 (SE_3)</option>
+            <option value="FI">Finlande (FI)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="start-date">Date de début :</label>
+          <input type="date" id="start-date" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="end-date">Date de fin :</label>
+          <input type="date" id="end-date" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <a href="https://github.com/whocoppin-15/solar-comparison-tool/actions/workflows/daily_update.yml" 
+             target="_blank" 
+             class="btn-action">
+            🔄 Lancer l'extraction ENTSO-E
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Affichage des Métriques et Graphique -->
+    <div class="card">
+      <div class="metrics-container" id="metrics-container"></div>
+      <div style="position: relative; height: 450px; margin-top: 1.5rem;">
+        <canvas id="comparisonChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>    .metrics-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
     .metric-card { padding: 1rem; border-radius: 8px; border-left: 4px solid #0d6efd; background-color: #f8f9fa; }
     .metric-card.secondary { border-left-color: #fd7e14; }
     .metric-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; }
