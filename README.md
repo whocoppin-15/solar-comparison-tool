@@ -72,7 +72,7 @@ Le projet repose sur une architecture statique légère, sans serveur permanent 
 1. Va dans **Settings** > **Secrets and variables** > **Actions**.
 2. Clique sur **New repository secret**.
 3. **Nom** : `ENTSOE_API_KEY`
-4. **Valeur** : Ta clé API brute (ex: `efadc6a0-315b-4e10-a7ec-e4ad721128f2`).
+4. **Valeur** : Ta clé API brute (ex: `efad********************`).
 
 ### 3. Permissions du Workflow
 1. Va dans **Settings** > **Actions** > **General**.
