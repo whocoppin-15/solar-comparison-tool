@@ -22,31 +22,44 @@ Les données sont extraites automatiquement depuis l'API officielle **ENTSO-E Tr
 
 ## 🛠️ Architecture du Projet
 
-Le projet repose sur une architecture statique légère, sans serveur permanent (*serverless*) :
-┌─────────────────────────┐
-│ API ENTSO-E             │
-└────────────┬────────────┘
-│ (Clé API ENTSOE_API_KEY)
-▼
-┌─────────────────────────┐
-│ GitHub Actions          │ ──> Exécute generate_data.py
-└────────────┬────────────┘
-│
-▼
-┌─────────────────────────┐
-│ data.json               │ ──> Fichier de données structuré
-└────────────┬────────────┘
-│
-▼
-┌─────────────────────────┐
-│ Site GitHub Pages       │ ──> index.html + script.js + Chart.js
-└─────────────────────────┘
+Le projet repose sur une chaîne de traitement automatisée et statique (*serverless*), structurée en 5 composants clés :
 
-1. **`generate_data.py`** : Script Python qui interroge l'API ENTSO-E, calcule les moyennes horaires/métriques et génère le fichier `data.json`.
-2. **`.github/workflows/daily_update.yml`** : Workflow d'automatisation GitHub Actions.
-3. **`data.json`** : Base de données statique au format JSON mise à jour à chaque exécution.
-4. **`index.html`** : Interface utilisateur (widgets de sélection de pays, sélecteur de dates, bouton d'extraction).
-5. **`script.js`** : Logique front-end qui lit `data.json` et trace les courbes en temps réel.
+* **1. Source de Données (API ENTSO-E Transparency)**
+  * Fournit les prix de l'électricité *Day-Ahead* heure par heure pour les pays européens.
+  * Requiert une clé d'API sécurisée (`ENTSOE_API_KEY`).
+
+* **2. Moteur d'Extraction & Calculs (`generate_data.py`)**
+  * Script Python utilisant Pandas et la bibliothèque `entsoe-py`.
+  * Télécharge les séries temporelles pour les 20 zones géographiques.
+  * Rééchantillonne les données et calcule les indicateurs clés (Baseload, Prix Solaire 10h-17h, Facteur de Cannibalisation et Décote).
+  * Génère le fichier structuré `data.json`.
+
+* **3. Automate d'Exécution (`.github/workflows/daily_update.yml`)**
+  * Workflow GitHub Actions s'exécutant automatiquement chaque jour à 06:00 UTC.
+  * Permet le déclenchement manuel (*Workflow Dispatch*) pour extraire des périodes personnalisées (jusqu'à 1 an).
+  * Injecte la clé API depuis GitHub Secrets et effectue le `commit`/`push` automatique de `data.json`.
+
+* **4. Stockage Statique (`data.json`)**
+  * Sert de base de données intermédiaire au format JSON.
+  * Contient les dates de la période analysée et l'ensemble des profils horaires pour chaque pays.
+
+* **5. Interface Graphique Front-End (`index.html` & `script.js`)**
+  * Site web autonome hébergé sur GitHub Pages.
+  * **`index.html`** : Contient la mise en page responsive, les menus déroulants de sélection des pays et les boutons d'action.
+  * **`script.js`** : Interroge `data.json` via une requête HTTP (`fetch`), met à jour dynamiquement les cartes de métriques et trace les courbes comparatives à l'aide de **Chart.js**.
+ 
+### 📂 Structure du Dépôt
+
+```text
+solar-comparison-tool/
+├── .github/
+│   └── workflows/
+│       └── daily_update.yml  # Automatisation de l'extraction et mise à jour
+├── data.json                 # Base de données JSON générée dynamiquement
+├── generate_data.py          # Script Python d'extraction et calculs (Pandas / ENTSO-E)
+├── index.html                # Interface utilisateur HTML5 / CSS3
+├── script.js                 # Logique d'affichage et graphiques (Chart.js)
+└── README.md                 # Documentation du projet
 
 ---
 
