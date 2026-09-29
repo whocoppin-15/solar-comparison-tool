@@ -47,7 +47,9 @@ Le projet repose sur une chaîne de traitement automatisée et statique (*server
   * Site web autonome hébergé sur GitHub Pages.
   * **`index.html`** : Contient la mise en page responsive, les menus déroulants de sélection des pays et les boutons d'action.
   * **`script.js`** : Interroge `data.json` via une requête HTTP (`fetch`), met à jour dynamiquement les cartes de métriques et trace les courbes comparatives à l'aide de **Chart.js**.
- 
+
+---
+
 ### 📂 Structure du Dépôt
 
 ```text
