@@ -72,7 +72,7 @@ else:
     print(f"📅 Dates par défaut utilisées : du {start_str} au {end_str}")
 
 zones_list = [
-    "FR", "DE_LU", "ES", "BE", "PT", "IT_NORTH", "NL", "CH", "AT", "PL",
+    "FR", "DE_LU", "ES", "BE", "PT", "IT-NORTH", "NL", "CH", "AT", "PL",
     "CZ", "SK", "HU", "RO", "BG", "GR", "DK_1", "DK_2", "SE_3", "FI"
 ]
 
